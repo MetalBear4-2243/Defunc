@@ -66,8 +66,9 @@ To avoid unintended collision checks:
 | **Move Left** | `A` | `Left Arrow` |
 | **Move Right** | `D` | `Right Arrow` |
 | **Jump / Variable Jump** | `Spacebar` (Hold for high jump, tap for short hop) | — |
+| **Time Shift** | `Left Shift` | `Right Shift` |
 
-> **Note on Input System:** The script is configured to use the modern Unity Input System Package (`Keyboard.current`) which is active in this project, while retaining an automatic fallback to the legacy Input Manager.
+> **Note on Input System:** Both `PlayerMovement` and `TimeShiftController` (see [Time Shift Setup Guide](time_shift_setup.md)) are configured to use the modern Unity Input System Package (`Keyboard.current`) which is active in this project, while retaining an automatic fallback to the legacy Input Manager.
 
 ---
 
