@@ -26,6 +26,7 @@ public class HazardGlow : MonoBehaviour
 
     [Header("2D Point Light (Optional)")]
     [SerializeField] private Light2D pointLight;
+    [SerializeField] private Color lightColor = new Color(1f, 0.45f, 0.05f, 1f);
     [SerializeField] private float baseLightIntensity = 2.5f;
     [SerializeField] private float pulseLightAmount = 0.6f;
 
@@ -59,7 +60,7 @@ public class HazardGlow : MonoBehaviour
         if (pointLight != null)
         {
             pointLight.lightType = Light2D.LightType.Point;
-            pointLight.color = new Color(1f, 0.45f, 0.05f, 1f);
+            pointLight.color = lightColor;
             pointLight.intensity = baseLightIntensity;
         }
 

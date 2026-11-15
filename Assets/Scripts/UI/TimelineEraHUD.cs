@@ -42,7 +42,7 @@ public class TimelineEraHUD : MonoBehaviour
     {
         if (timeShiftController == null)
         {
-            timeShiftController = FindFirstObjectByType<TimeShiftController>();
+            timeShiftController = FindAnyObjectByType<TimeShiftController>();
         }
 
         if (eraLabel == null)

@@ -1,6 +1,9 @@
 # Hazard KillZone & Glow Setup
 
-**Prefab:** [`Hazard_KillZone.prefab`](../Assets/Level%20Prefabs/Hazard_KillZone.prefab)  
+**Prefabs:**
+- [`Hazard_KillZone.prefab`](../Assets/Level%20Prefabs/Hazard_KillZone.prefab) *(Fire Red + Orange Glow)*
+- [`Hazard_KillZone_Orange.prefab`](../Assets/Level%20Prefabs/Hazard_KillZone_Orange.prefab) *(Bright Orange + Orange Glow)*
+- [`Hazard_KillZone_Blue.prefab`](../Assets/Level%20Prefabs/Hazard_KillZone_Blue.prefab) *(Bright Blue + Blue Glow)*
 **Components:**
 - [`KillZone.cs`](../Assets/Scripts/Checkpoints/KillZone.cs)
 - [`HazardGlow.cs`](../Assets/Scripts/Checkpoints/HazardGlow.cs)
@@ -26,5 +29,6 @@
 | **Pulse Padding Amount** | `0.15` | Additional padding added at the peak of each pulse cycle. |
 | **Pulse Speed** | `3.2` | Speed of the glow pulse animation. |
 | **Point Light** | `None` *(Auto-finds)* | Optional `Light2D` component driven in sync with the pulse. |
+| **Light Color** | Orange `(1, 0.45, 0.05, 1)` | Color applied to the `Light2D` component. |
 | **Base Light Intensity** | `2.5` | Minimum `Light2D` intensity. |
 | **Pulse Light Amount** | `0.6` | Extra `Light2D` intensity added at the peak of each pulse. |
