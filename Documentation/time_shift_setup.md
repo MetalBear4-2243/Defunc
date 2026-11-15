@@ -61,6 +61,7 @@ When the player presses **Left Shift** or **Right Shift**, `TimeShiftController.
 | **Nudge Flash Color** | `(1, 0.85, 0.3, 1)` | Sprite tint flashed when a safety nudge resolves an overlap. |
 | **Denied Flash Color** | `(1, 0.3, 0.3, 1)` | Sprite tint flashed when a shift is denied. |
 | **Feedback Flash Duration** | `0.12` | Duration (seconds) of the sprite tint flash. |
+| **Pulse Effect** | `None` *(Auto-retrieves)* | Reference to [`TimeShiftPulseEffect`](time_shift_pulse_effect.md) on the player. |
 
 ---
 
@@ -77,6 +78,7 @@ When the player presses **Left Shift** or **Right Shift**, `TimeShiftController.
 ### Public Members & Events
 
 * `TimelineEra CurrentEra` — Returns the currently active `TimelineEra` (`Past` or `Future`).
+* `TimeShiftPulseEffect PulseEffect` — Reference to the attached [`TimeShiftPulseEffect`](time_shift_pulse_effect.md) component.
 * `bool TryShiftTimeline()` — Programmatically triggers a shift attempt; returns `true` if shifted, `false` if denied.
 * `event Action<TimelineEra, bool> OnTimelineShifted` — Fired after a successful shift with `(newEra, wasSafetyNudged)`. Subscribe audio/VFX systems here.
 * `event Action OnShiftDenied` — Fired when a shift is denied because no clear position exists within `maxNudgeDistance`.

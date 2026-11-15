@@ -82,6 +82,9 @@ public class TimeShiftController : MonoBehaviour
     [Tooltip("Duration (seconds) of the sprite tint flash when shifting or being denied.")]
     [SerializeField] private float feedbackFlashDuration = 0.12f;
 
+    [Tooltip("Optional reference to the pulse visual effect. Auto-retrieves from this GameObject or children if empty.")]
+    [SerializeField] private TimeShiftPulseEffect pulseEffect;
+
     // Cached components
     private Rigidbody2D rb;
     private Collider2D col;
@@ -110,6 +113,11 @@ public class TimeShiftController : MonoBehaviour
     public TimelineEra CurrentEra => currentEra;
 
     /// <summary>
+    /// Reference to the TimeShiftPulseEffect component, if attached.
+    /// </summary>
+    public TimeShiftPulseEffect PulseEffect => pulseEffect;
+
+    /// <summary>
     /// Invoked after a successful timeline shift. Parameters: (newEra, wasSafetyNudged).
     /// </summary>
     public event Action<TimelineEra, bool> OnTimelineShifted;
@@ -129,6 +137,11 @@ public class TimeShiftController : MonoBehaviour
         if (spriteRenderer != null)
         {
             baseSpriteColor = spriteRenderer.color;
+        }
+
+        if (pulseEffect == null)
+        {
+            pulseEffect = GetComponentInChildren<TimeShiftPulseEffect>();
         }
 
         if (pastWorldRoot == null)
