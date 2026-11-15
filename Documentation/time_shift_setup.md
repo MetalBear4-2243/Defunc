@@ -45,9 +45,10 @@ When the player presses **Left Shift** or **Right Shift**, `TimeShiftController.
 
 | Property | Default | Description |
 | :--- | :--- | :--- |
-| **Starting Era** | `Past` | Timeline active when the scene starts (`Past` or `Future`). |
+| **Starting Era** | `Future` | Timeline active when the scene starts (`Past` or `Future`). |
 | **Past World Root** | `None` *(Auto-finds `World_Past`)* | Parent GameObject containing Past timeline geometry. |
 | **Future World Root** | `None` *(Auto-finds `World_Future`)* | Parent GameObject containing Future timeline geometry. |
+| **Can Shift** | `true` | Whether timeline shifting is currently enabled (`false` locks shifting until unlocked). |
 | **Shift Cooldown** | `0.15` | Minimum seconds between successful timeline shifts. |
 | **Obstacle Layer** | `Ground` *(Fallback: `Default`)* | LayerMask checked for obstructions in the target timeline. |
 | **Max Nudge Distance** | `1.5` | Maximum search radius (world units) for the safety nudge fallback. |
@@ -62,6 +63,10 @@ When the player presses **Left Shift** or **Right Shift**, `TimeShiftController.
 | **Denied Flash Color** | `(1, 0.3, 0.3, 1)` | Sprite tint flashed when a shift is denied. |
 | **Feedback Flash Duration** | `0.12` | Duration (seconds) of the sprite tint flash. |
 | **Pulse Effect** | `None` *(Auto-retrieves)* | Reference to [`TimeShiftPulseEffect`](time_shift_pulse_effect.md) on the player. |
+| **Tint Level Geometry** | `true` | Automatically tints `SpriteRenderer`s under `LevelGeometry` to match the active era (excluding `Checkpoint` and `KillZone` objects). |
+| **Level Geometry Root** | `None` *(Auto-finds `LevelGeometry`)* | Parent GameObject containing shared level platforms. |
+| **Past Platform Color** | `(0.35, 0.40, 0.48, 1)` | Color applied to `LevelGeometry` platforms in the Past era. |
+| **Future Platform Color** | `(0.65, 0.25, 0.14, 1)` | Color applied to `LevelGeometry` platforms in the Future era. |
 
 ---
 
