@@ -41,7 +41,7 @@ public class TimeShiftController : MonoBehaviour
 
     [Header("Timeline Hierarchy (Approach 1)")]
     [Tooltip("Timeline active when the scene starts.")]
-    [SerializeField] private TimelineEra startingEra = TimelineEra.Past;
+    [SerializeField] private TimelineEra startingEra = TimelineEra.Future;
 
     [Tooltip("Parent GameObject containing Past timeline geometry. Auto-finds 'World_Past' if empty.")]
     [SerializeField] private GameObject pastWorldRoot;
@@ -50,6 +50,9 @@ public class TimeShiftController : MonoBehaviour
     [SerializeField] private GameObject futureWorldRoot;
 
     [Header("Shift Controls & Cooldown")]
+    [Tooltip("Whether the player is currently allowed to shift timelines.")]
+    [SerializeField] private bool canShift = true;
+
     [Tooltip("Minimum time (seconds) between successful timeline shifts.")]
     [SerializeField] private float shiftCooldown = 0.15f;
 
@@ -85,12 +88,23 @@ public class TimeShiftController : MonoBehaviour
     [Tooltip("Optional reference to the pulse visual effect. Auto-retrieves from this GameObject or children if empty.")]
     [SerializeField] private TimeShiftPulseEffect pulseEffect;
 
+    [Header("Level Geometry Timeline Tint")]
+    [Tooltip("If enabled, automatically tints platform SpriteRenderers under LevelGeometry to match the active era.")]
+    [SerializeField] private bool tintLevelGeometry = true;
+
+    [Tooltip("Parent GameObject containing shared level geometry. Auto-finds 'LevelGeometry' if empty.")]
+    [SerializeField] private GameObject levelGeometryRoot;
+
+    [SerializeField] private Color pastPlatformColor = new Color(0.35f, 0.40f, 0.48f, 1f);
+    [SerializeField] private Color futurePlatformColor = new Color(0.65f, 0.25f, 0.14f, 1f);
+
     // Cached components
     private Rigidbody2D rb;
     private Collider2D col;
     private CapsuleCollider2D capsuleCol;
     private SpriteRenderer spriteRenderer;
     private Color baseSpriteColor = Color.white;
+    private readonly System.Collections.Generic.List<SpriteRenderer> levelGeometryRenderers = new System.Collections.Generic.List<SpriteRenderer>();
 
     // State
     private TimelineEra currentEra;
@@ -154,6 +168,13 @@ public class TimeShiftController : MonoBehaviour
             futureWorldRoot = GameObject.Find("World_Future");
         }
 
+        if (levelGeometryRoot == null)
+        {
+            levelGeometryRoot = GameObject.Find("LevelGeometry");
+        }
+
+        CacheLevelGeometryRenderers();
+
         if (pastWorldRoot == null && futureWorldRoot == null)
         {
             Debug.LogWarning("[TimeShiftController] Neither pastWorldRoot nor futureWorldRoot is assigned or found in the scene.", this);
@@ -186,10 +207,35 @@ public class TimeShiftController : MonoBehaviour
     {
         UpdateFeedbackFlash();
 
-        if (GatherShiftInput() && Time.time >= lastShiftTime + shiftCooldown)
+        if (canShift && GatherShiftInput() && Time.time >= lastShiftTime + shiftCooldown)
         {
             TryShiftTimeline();
         }
+    }
+
+    /// <summary>
+    /// Gets or sets whether the player is currently allowed to shift timelines.
+    /// </summary>
+    public bool CanShift
+    {
+        get => canShift;
+        set => canShift = value;
+    }
+
+    /// <summary>
+    /// Allows the player to shift timelines.
+    /// </summary>
+    public void UnlockShift()
+    {
+        canShift = true;
+    }
+
+    /// <summary>
+    /// Prevents the player from shifting timelines.
+    /// </summary>
+    public void LockShift()
+    {
+        canShift = false;
     }
 
     /// <summary>
@@ -199,6 +245,11 @@ public class TimeShiftController : MonoBehaviour
     /// <returns>True if the shift succeeded; false if denied.</returns>
     public bool TryShiftTimeline()
     {
+        if (!canShift)
+        {
+            return false;
+        }
+
         TimelineEra targetEra = currentEra == TimelineEra.Past ? TimelineEra.Future : TimelineEra.Past;
 
         // Temporarily switch active hierarchies so Physics2D evaluates the target timeline's colliders.
@@ -229,6 +280,24 @@ public class TimeShiftController : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Immediately switches to the specified timeline era without obstruction checks
+    /// (e.g., when respawning at a checkpoint).
+    /// </summary>
+    public void SetEraImmediate(TimelineEra era)
+    {
+        if (currentEra == era)
+        {
+            return;
+        }
+
+        currentEra = era;
+        ApplyEraWorldState(currentEra);
+        Physics2D.SyncTransforms();
+        UpdateCameraBackground(currentEra);
+        OnTimelineShifted?.Invoke(currentEra, false);
+    }
+
     private bool GatherShiftInput()
     {
 #if ENABLE_INPUT_SYSTEM
@@ -256,6 +325,47 @@ public class TimeShiftController : MonoBehaviour
         if (futureWorldRoot != null)
         {
             futureWorldRoot.SetActive(era == TimelineEra.Future);
+        }
+
+        UpdateLevelGeometryColors(era);
+    }
+
+    private void CacheLevelGeometryRenderers()
+    {
+        levelGeometryRenderers.Clear();
+        if (levelGeometryRoot == null)
+        {
+            return;
+        }
+
+        SpriteRenderer[] renderers = levelGeometryRoot.GetComponentsInChildren<SpriteRenderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            SpriteRenderer sr = renderers[i];
+            if (sr == null || sr.GetComponent<Checkpoint>() != null || sr.GetComponent<KillZone>() != null)
+            {
+                continue;
+            }
+
+            levelGeometryRenderers.Add(sr);
+        }
+    }
+
+    private void UpdateLevelGeometryColors(TimelineEra era)
+    {
+        if (!tintLevelGeometry || levelGeometryRenderers.Count == 0)
+        {
+            return;
+        }
+
+        Color targetColor = era == TimelineEra.Past ? pastPlatformColor : futurePlatformColor;
+        for (int i = 0; i < levelGeometryRenderers.Count; i++)
+        {
+            SpriteRenderer sr = levelGeometryRenderers[i];
+            if (sr != null)
+            {
+                sr.color = new Color(targetColor.r, targetColor.g, targetColor.b, sr.color.a);
+            }
         }
     }
 
